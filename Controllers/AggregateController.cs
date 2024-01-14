@@ -18,6 +18,11 @@ public class AggregateController: Controller
     [HttpGet]
     public async Task<Aggregate> GetAggregateById(Guid id, CancellationToken cancellationToken)
     {
-        return await _repository.AggregateLinq(id, cancellationToken);
+        return await _repository.AggregateLinqAsync(id, cancellationToken);
+    }
+
+    public Task<BsonDocument> GetLookup(Guid id)
+    {
+        return _repository.GetLookup(id);
     }
 }

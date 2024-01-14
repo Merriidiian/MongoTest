@@ -10,15 +10,17 @@ public class AggregateRepository : IAggregateRepository
     private readonly IClientRepository _clientRepository;
     private readonly IAccountRepository _accountRepository;
     private readonly ICardRepository _cardRepository;
+    private readonly IMongoDatabase _mongoDatabase;
 
-    public AggregateRepository(IClientRepository clientRepository, IAccountRepository accountRepository, ICardRepository cardRepository)
+    public AggregateRepository(IClientRepository clientRepository, IAccountRepository accountRepository, ICardRepository cardRepository, IMongoDatabase mongoDatabase)
     {
         _clientRepository = clientRepository;
         _accountRepository = accountRepository;
         _cardRepository = cardRepository;
+        _mongoDatabase = mongoDatabase;
     }
 
-    public async Task<Aggregate> AggregateLinq(Guid idClient, CancellationToken cancellationToken)
+    public async Task<Aggregate> AggregateLinqAsync(Guid idClient, CancellationToken cancellationToken)
     {
         var client = await _clientRepository.SelectByIdAsync(idClient, cancellationToken);
         var listAccounts = _accountRepository.SelectAllAsync(cancellationToken).Result.Where(a => a.ClientId == client.Id).ToList();
@@ -35,5 +37,12 @@ public class AggregateRepository : IAggregateRepository
             Cards = listCards
         };
         return aggregate;
+    }
+
+    public Task<BsonDocument> GetLookup(Guid idClient)
+    {
+       var lookup = _mongoDatabase.Aggregate()
+            .Lookup("Account", "Client", "Account", "Accounts");
+       return Task.FromResult(lookup.ToBsonDocument());
     }
 }
