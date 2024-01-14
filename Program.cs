@@ -12,6 +12,7 @@ builder.Services.AddSingleton<BankContext>();
 builder.Services.AddTransient<IClientRepository, ClientRepository>();
 builder.Services.AddTransient<IAccountRepository, AccountRepository>();
 builder.Services.AddTransient<ICardRepository, CardRepository>();
+builder.Services.AddTransient<IAggregateRepository, AggregateRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
