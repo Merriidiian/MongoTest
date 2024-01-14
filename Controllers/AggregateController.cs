@@ -20,9 +20,4 @@ public class AggregateController: Controller
     {
         return await _repository.AggregateLinqAsync(id, cancellationToken);
     }
-
-    public Task<BsonDocument> GetLookup(Guid id)
-    {
-        return _repository.GetLookup(id);
-    }
 }
